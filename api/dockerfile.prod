@@ -1,0 +1,14 @@
+FROM golang:1.23.5-alpine AS builder
+ENV GIN_MODE=release
+WORKDIR /api
+RUN go install github.com/pressly/goose/v3/cmd/goose@latest
+COPY go.mod go.sum cmd/api/main.go ./
+RUN go mod tidy
+COPY . .
+RUN go build -o /api/dist/gin-api
+
+FROM scratch
+WORKDIR /api
+COPY --from=builder /api/dist /api
+EXPOSE 8001
+CMD ["./gin-api"]

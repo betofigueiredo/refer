@@ -1,26 +1,27 @@
 package server
 
 import (
+	"database/sql"
+	"refer/internal/api"
 	"refer/internal/db"
 
-	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/uptrace/bun"
 )
 
 type Application struct {
-	// UserHandler    *api.UserHandler
 	// Middleware     middleware.UserMiddleware
-	queries *bun.DB
-	DBPool  *pgxpool.Pool
+	UserHandler *api.UserHandler
+	Queries     *bun.DB
+	SQLDB       *sql.DB
 }
 
 func NewApplication() (*Application, error) {
-	dbpool, err := db.Open()
+	sqldb, err := db.Open()
 	if err != nil {
 		return nil, err
 	}
 
-	queries, err := db.New(dbpool)
+	queries, err := db.New(sqldb)
 	if err != nil {
 		panic(err)
 	}
@@ -32,12 +33,15 @@ func NewApplication() (*Application, error) {
 
 	// logger := log.New(os.Stdout, "", log.Ldate|log.Ltime)
 
+	// handlers
+	userHandler := api.NewUsersHandler(queries)
+
 	app := &Application{
 		// Logger:         logger,
-		// UserHandler:    userHandler,
 		// Middleware:     middlewareHandler,
-		queries: queries,
-		DBPool:  dbpool,
+		UserHandler: userHandler,
+		Queries:     queries,
+		SQLDB:       sqldb,
 	}
 
 	return app, nil

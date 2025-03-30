@@ -11,6 +11,7 @@ import (
 	"syscall"
 	"time"
 
+	"refer/internal/routes"
 	"refer/internal/server"
 )
 
@@ -39,9 +40,9 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	defer app.DBPool.Close()
+	defer app.SQLDB.Close()
 
-	r := server.SetupRoutes(app)
+	r := routes.SetupRoutes(app)
 
 	port, _ := strconv.Atoi(os.Getenv("PORT"))
 	server := &http.Server{

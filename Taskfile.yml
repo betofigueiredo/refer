@@ -1,0 +1,46 @@
+version: "3"
+
+tasks:
+  welcome-print:
+    cmds:
+      - cmd: echo ""
+      - cmd: echo " ██████╗ ███████╗███████╗███████╗██████╗ "
+      - cmd: echo " ██╔══██╗██╔════╝██╔════╝██╔════╝██╔══██╗"
+      - cmd: echo " ██████╔╝█████╗  █████╗  █████╗  ██████╔╝"
+      - cmd: echo " ██╔══██╗██╔══╝  ██╔══╝  ██╔══╝  ██╔══██╗"
+      - cmd: echo " ██║  ██║███████╗██║     ███████╗██║  ██║"
+      - cmd: echo " ╚═╝  ╚═╝╚══════╝╚═╝     ╚══════╝╚═╝  ╚═╝"
+      - cmd: echo " ----------------------------------------"
+      - cmd: echo ""
+    silent: true
+
+  default:
+    deps: [welcome-print]
+    cmds:
+      - task -l
+    silent: true
+
+  dev:up:
+    dir: "{{.USER_WORKING_DIR}}"
+    desc: Starts development mode
+    cmds:
+      - docker compose up
+
+  dev:down:
+    dir: "{{.USER_WORKING_DIR}}"
+    desc: Stop development mode
+    cmds:
+      - docker compose down
+
+  db:create-migration:
+    desc: Create new database migration
+    dir: api
+    cmds:
+      - docker compose exec refer_api goose -s create {{.CLI_ARGS}} sql
+      - sudo chown -R $USER:$USER ./internal/db/migrations
+
+  db:run-migrations:
+    desc: Run database migrations
+    dir: api
+    cmds:
+      - docker compose exec refer_api goose up

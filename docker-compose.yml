@@ -1,0 +1,15 @@
+services:
+  refer_api:
+    container_name: refer_api
+    hostname: refer_api
+    build:
+      context: ./api
+      dockerfile: dockerfile.dev
+    env_file:
+      - ./api/.env
+    ports:
+      - "8080:8080"
+    restart: on-failure
+    volumes:
+      - ./api:/api
+      - ./database/refer.db:/refer.db
