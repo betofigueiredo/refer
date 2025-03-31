@@ -44,3 +44,9 @@ tasks:
     dir: api
     cmds:
       - docker compose exec refer_api goose up
+
+  db:generate-queries:
+    desc: Generate database queries
+    dir: api
+    cmds:
+      - docker compose exec refer_api sqlc generate

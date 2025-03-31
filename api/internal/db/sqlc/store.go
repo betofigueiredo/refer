@@ -6,9 +6,6 @@ import (
 
 	"database/sql"
 
-	"github.com/uptrace/bun"
-
-	"github.com/uptrace/bun/dialect/sqlitedialect"
 	"github.com/uptrace/bun/driver/sqliteshim"
 )
 
@@ -20,9 +17,15 @@ func Open() (*sql.DB, error) {
 		return nil, fmt.Errorf("db: open %w", err)
 	}
 	maxOpenConns := 4 * runtime.GOMAXPROCS(0)
+
+	// pool.SetConnMaxLifetime(0)
+	// pool.SetMaxIdleConns(3)
+	// pool.SetMaxOpenConns(3)
+
 	sqldb.SetMaxOpenConns(maxOpenConns)
 	sqldb.SetMaxIdleConns(maxOpenConns)
 	return sqldb, nil
+
 	// dbpool, err := pgxpool.New(context.Background(), os.Getenv("DB_ADDR"))
 	// if err != nil {
 	// 	return nil, fmt.Errorf("db: open %w", err)
@@ -30,9 +33,9 @@ func Open() (*sql.DB, error) {
 	// return dbpool, nil
 }
 
-func New(sqldb *sql.DB) (*bun.DB, error) {
-	db := bun.NewDB(sqldb, sqlitedialect.New())
-	// sqldb := stdlib.OpenDBFromPool(dbpool)
-	// db := bun.NewDB(sqldb, pgdialect.New())
-	return db, nil
-}
+// func New2(sqldb *sql.DB) (*bun.DB, error) {
+// 	db := bun.NewDB(sqldb, sqlitedialect.New())
+// 	// sqldb := stdlib.OpenDBFromPool(dbpool)
+// 	// db := bun.NewDB(sqldb, pgdialect.New())
+// 	return db, nil
+// }

@@ -3,15 +3,13 @@ package server
 import (
 	"database/sql"
 	"refer/internal/api"
-	"refer/internal/db"
-
-	"github.com/uptrace/bun"
+	db "refer/internal/db/sqlc"
 )
 
 type Application struct {
 	// Middleware     middleware.UserMiddleware
 	UserHandler *api.UserHandler
-	Queries     *bun.DB
+	Queries     *db.Queries
 	SQLDB       *sql.DB
 }
 
@@ -21,10 +19,7 @@ func NewApplication() (*Application, error) {
 		return nil, err
 	}
 
-	queries, err := db.New(sqldb)
-	if err != nil {
-		panic(err)
-	}
+	queries := db.New(sqldb)
 
 	// err = db.MigrateFS(pgDB, migrations.FS, ".")
 	// if err != nil {

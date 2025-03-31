@@ -1,26 +1,23 @@
 package api
 
 import (
-	"refer/internal/db"
+	db "refer/internal/db/sqlc"
 
 	"github.com/gin-gonic/gin"
-	"github.com/uptrace/bun"
 )
 
 type UserHandler struct {
-	store *bun.DB
+	store *db.Queries
 }
 
-func NewUsersHandler(store *bun.DB) *UserHandler {
+func NewUsersHandler(store *db.Queries) *UserHandler {
 	return &UserHandler{
 		store: store,
 	}
 }
 
 func (h *UserHandler) GetUsers(c *gin.Context) {
-	var users []db.User
-	user := new(db.User)
-	err := h.store.NewSelect().Model(user).Scan(c, &users)
+	users, err := h.store.GetUsers(c)
 	if err != nil {
 		c.JSON(400, gin.H{"error": err})
 		return
